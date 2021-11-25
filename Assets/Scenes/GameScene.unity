@@ -1725,6 +1725,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   masterAudio: {fileID: 24100000, guid: 5b76507dc3896a447ae0e35cfa1c37d5, type: 2}
+  audioSlider: {fileID: 693256316}
 --- !u!82 &1797459493
 AudioSource:
   m_ObjectHideFlags: 0
