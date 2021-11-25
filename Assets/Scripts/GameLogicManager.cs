@@ -28,11 +28,13 @@ public class GameLogicManager : MonoBehaviour
     // this will increase the player's score the higher they go and then save it when they die
     public bool playerIsDead;
     public GameObject deathScreen;
+    public bool gameIsPaused;
 
     // Start is called before the first frame update
     void Start()
     {
         playerScore = player.position.y;
+        gameIsPaused = true;
         playerIsDead = false;
         Vector3 spawnPosition = new Vector3();
         for (int i = 0; i < platformCount; i++)
@@ -46,9 +48,26 @@ public class GameLogicManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (gameIsPaused == true)
+        {
+            Time.timeScale = 0;
+        }
+        else if (gameIsPaused == false)
+        {
+            Time.timeScale = 1;
+        }
+        if ((Input.anyKeyDown) && gameIsPaused == true)
+        {
+            gameIsPaused = false;
+        }
         if (playerIsDead)
         {
             deathScreen.SetActive(true);
+            Save();
+        }
+        if (Input.GetKeyDown(KeyCode.X))
+        {
+            ReloadGame();
         }
         if (player.position.y > playerScore)
         {
@@ -60,52 +79,30 @@ public class GameLogicManager : MonoBehaviour
         {
             highScore = playerScore;
         }
-        highScoreText.text = highScore.ToString();
-        if (Input.GetKeyDown(KeyCode.F5) && playerIsDead)
+        else if (playerScore <= 0)
         {
-            SaveGame();
+            Load();
         }
-    }
-    private void OnTriggerEnter2D(Collider2D collision)
-    {
-       if( collision.gameObject.CompareTag("Death Field"))
+        highScoreText.text = "High Score = " + Mathf.RoundToInt(highScore).ToString() + " Points";
+        if (Input.GetKeyDown(KeyCode.Space) && playerIsDead)
         {
-            playerIsDead = true;
+            ReloadGame();
         }
     }
     public void ReloadGame()
     {
-        SceneManager.LoadScene(1);
+        Debug.Log("Reload");
+        SceneManager.LoadScene(0);
     }
-    [System.Serializable]
-    class SaveData
+    public void Save()
     {
-        public float savedHighScore;
+        Debug.Log("Saving");
+        SaveLoad.SavePlayer(this);
+
     }
-    void SaveGame()
+    public void Load()
     {
-        BinaryFormatter bf = new BinaryFormatter();
-        FileStream file = File.Create(Application.persistentDataPath + "/mysavedata.dat");
-        SaveData data = new SaveData();
-        data.savedHighScore = highScore;
-        bf.Serialize(file, data);
-        file.Close();
-        Debug.Log("Saved the Game");
-    }
-    void LoadGame()
-    {
-        if(File.Exists(Application.persistentDataPath + "/mysavedata.dat"))
-        {
-            BinaryFormatter bf = new BinaryFormatter();
-            FileStream file = File.Open(Application.persistentDataPath + "/mysavedata.dat", FileMode.Open);
-            SaveData data = (SaveData)bf.Deserialize(file);
-            file.Close();
-            highScore = data.savedHighScore;
-            Debug.Log("Game Loaded!");
-        }
-        else
-        {
-            Debug.LogError("No save data!");
-        }
+        PlayerData data = SaveLoad.LoadPlayer();
+        highScore = data.highScore;
     }
 }
