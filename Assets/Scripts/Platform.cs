@@ -17,18 +17,8 @@ public class Platform : MonoBehaviour
                 Vector2 velocity = rb.velocity;
                 velocity.y = jumpForce;
                 rb.velocity = velocity;
+                rb.SendMessageUpwards("PlayerBounce");
             }
         }
-    }
-    // Start is called before the first frame update
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
     }
 }

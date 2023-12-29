@@ -26,12 +26,17 @@ public class Player : MonoBehaviour
         velocity.x = moveX ;
         rb2d.velocity = velocity;
     }
-    private void OnCollisionEnter2D(Collision2D collision)
+    /* private void OnCollisionEnter2D(Collision2D collision)
     {
-        if (collision.gameObject.CompareTag("solidPlatform"))
+        if (collision.gameObject.CompareTag("solidPlatform") && rb2d.velocity.y <= 0f)
         {
             aS.Play();
             anim.SetTrigger("Bounce");
         }
+    } */
+    public void PlayerBounce()
+    {
+        aS.Play();
+        anim.SetTrigger("Bounce");
     }
 }
